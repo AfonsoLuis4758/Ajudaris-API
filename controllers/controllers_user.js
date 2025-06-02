@@ -63,12 +63,12 @@ const refreshToken = (req, res) => {
     const accessToken = jwt.sign(
       { data: decoded.data },
       secret,
-      { expiresIn: "15m" }
+      { expiresIn: "1s" }
     );
     const newRefreshToken = jwt.sign(
       { data: decoded.data },
       secret,
-      { expiresIn: "12h" }
+      { expiresIn: "24h" }
     );
 
     res.status(200).send({accessToken, newRefreshToken});
