@@ -262,39 +262,48 @@ const deleteData = function (req, res) { // delete by id
         });
 }
 
-const deleteOwnData = function (req, res) { // delete by id
-    Submission.findByIdAndDelete(req.params.id)
-        .then((submissionResult) => {
-            if (!submissionResult) {
-                return res.status(404).send("Submission not found");
-            }
-            // Delete the associated file
-            File.findOneAndDelete({ _id: submissionResult.fileId })
-                .then(() => {
-                    // Remove the rating reference from all users
-                    User.updateMany(
-                        {},
-                        {
-                            $pull: {
-                                ratings: { submissionId: req.params.id },
-                                markers: req.params.id
-                            }
+const deleteOwnData = function (req, res) { // delete by id for institution
+    Ajudaris.find({ id: "ajudaris" })
+        .then((ajudaris) => {
+            const currentDate = new Date().toISOString().slice(0, 10);
+            if (Date.parse(ajudaris[0].submissionDate) > Date.parse(currentDate)) {
+                Submission.findByIdAndDelete(req.params.id)
+                    .then((submissionResult) => {
+                        if (!submissionResult) {
+                            return res.status(404).send("Submission not found");
                         }
-                    )
-                        .then(() => {
-                            res.status(200).json({ message: "Submission, file, and user ratings deleted." });
-                        })
-                        .catch((error) => {
-                            res.status(400).send("Error removing ratings from users: " + error);
-                        });
-                })
-                .catch((error) => {
-                    res.status(400).send("Error deleting file: " + error);
-                });
+                        // Delete the associated file
+                        File.findOneAndDelete({ _id: submissionResult.fileId })
+                            .then(() => {
+                                // Remove the rating reference from all users
+                                User.updateMany(
+                                    {},
+                                    {
+                                        $pull: {
+                                            ratings: { submissionId: req.params.id },
+                                            markers: req.params.id
+                                        }
+                                    }
+                                )
+                                    .then(() => {
+                                        res.status(200).json({ message: "Submission, file, and user ratings deleted." });
+                                    })
+                                    .catch((error) => {
+                                        res.status(400).send("Error removing ratings from users: " + error);
+                                    });
+                            })
+                            .catch((error) => {
+                                res.status(400).send("Error deleting file: " + error);
+                            });
+                    })
+                    .catch((error) => {
+                        res.status(400).send("Error: " + error);
+                    });
+            } else {
+                return res.status(400).send("Error: Date exceeded limit")
+            }
         })
-        .catch((error) => {
-            res.status(400).send("Error: " + error);
-        });
+
 }
 
 
