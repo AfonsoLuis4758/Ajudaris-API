@@ -7,7 +7,7 @@ const generateToken = (user_info, callback) => {
   const accessToken = jwt.sign(
     { data: user_info },
     secret,
-    { expiresIn: "1s" }
+    { expiresIn: "15m" }
   );
   const refreshToken = jwt.sign(
     { data: user_info },
