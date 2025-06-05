@@ -30,7 +30,6 @@ const UserSchema = new mongoose.Schema({
         submissionId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Submission' }],
         rating: Number,
     }],
-    otp: String,
 })
 
 const User = mongoose.model("User", UserSchema)
