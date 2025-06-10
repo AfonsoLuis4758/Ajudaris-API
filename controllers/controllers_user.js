@@ -418,9 +418,6 @@ const sendOTP = function (req, res) {     //OTP send
     .catch((error) => {
       res.status(400).send('Error: ' + error);
     });
-
-
-
 }
 
 function passwordReset(req, res) {     //password reset

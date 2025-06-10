@@ -14,7 +14,7 @@ const utilities = require("./utilities/utilities");
 
 
 const auth = function (req, res, next) {
-    let exceptions = [`/users/login`, `/users/institutions`, `/users/jurys`, `/users/illustrators`, `/users/revisors`,`/users/designers`, `/users/resets`, `/users/send-otp` , "/ajudaris/", "/users/auth/refresh"]
+    let exceptions = [`/users/login`, `/users/institutions`, `/users/jurys`, `/users/illustrators`, `/users/revisors`,`/users/designers`, `/users/send-otp`, `/users/password-reset` , "/ajudaris/", "/users/auth/refresh"]
     if (exceptions.indexOf(req.url) < 0) {
         utilities.validateToken(req.headers.authorization, (result, email) => {
             if (result) {
