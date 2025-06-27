@@ -28,7 +28,7 @@ const login = (req, res) => {
               } else {
                 homeUrl = "/specialHome.html"
               }
-              utilities.generateToken({ user: req.body.email, role: user[0].role, verified: user[0].verified }, (token) => {       
+              utilities.generateToken({ user: req.body.email, id: user[0].id , role: user[0].role, verified: user[0].verified }, (token) => {       
                     res.status(200).send({ homeUrl: homeUrl, user: user[0], accessToken: token.accessToken, refreshToken: token.refreshToken })
               });
               } else {
@@ -461,41 +461,54 @@ function passwordReset(req, res) {     //password reset
     });
 }
 
-function verifyAccount(req, res) {     //password reset
-  OTP.find({ email: req.body.email })
-    .then((otp) => {
-      if (otp.length > 0) {
-        bcrypt.compare(req.body.otp, otp[0].otp)
-          .then(function (result) {
-            if (result) {
-              let updateData = {
-                verified: true
-              }
-              User.findOneAndUpdate({ email: req.body.email }, updateData, { new: true }).then((result) => {
-                OTP.findOneAndDelete({ email: req.body.email }).then((result) => {
-                  if (result) {
-                    res.status(200).json(result)
-                  }
+function verifyAccount(req, res) {
+  // Get token from Authorization header
+  const token = req.headers["authorization"];
+
+  utilities.validateToken(token, (isValid, user) => {
+    if (!isValid) {
+      return res.status(403).send("Invalid or missing token");
+    }
+
+    // Ensure the user in the token matches the email being verified
+    if (user.email !== req.body.email && user.role !== "admin") {
+      return res.status(403).send("You can only verify your own account");
+    }
+
+    OTP.find({ email: req.body.email })
+      .then((otp) => {
+        if (otp.length > 0) {
+          bcrypt.compare(req.body.otp, otp[0].otp)
+            .then(function (result) {
+              if (result) {
+                let updateData = {
+                  verified: true
+                }
+                User.findOneAndUpdate({ email: req.body.email }, updateData, { new: true }).then((result) => {
+                  OTP.findOneAndDelete({ email: req.body.email }).then((result) => {
+                    if (result) {
+                      res.status(200).json(result)
+                    }
+                  }).catch((error) => {
+                    res.status(400).send("Error: " + error)
+                  })
                 }).catch((error) => {
                   res.status(400).send("Error: " + error)
                 })
-              }).catch((error) => {
-                res.status(400).send("Error: " + error)
-              })
 
-            } else {
-              res.status(401).send("Not Authorized");
-            }
-          });
-      } else {
-        res.status(401).send("Not Authorized");
-      }
-    })
-    .catch((error) => {
-      res.status(400).send('Error: ' + error);
-    });
+              } else {
+                res.status(401).send("Not Authorized");
+              }
+            });
+        } else {
+          res.status(401).send("Not Authorized");
+        }
+      })
+      .catch((error) => {
+        res.status(400).send('Error: ' + error);
+      });
+  });
 }
-
 
 
 

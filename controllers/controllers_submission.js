@@ -2,6 +2,7 @@ const Submission = require("../models/models_submission")
 const Ajudaris = require("../models/models_ajudaris");
 const File = require("../models/models_files");
 const User = require("../models/models_user");
+const utilities = require("../utilities/utilities");
 
 /**
  * @param {*} req 
@@ -194,6 +195,7 @@ const updateOwn = function (req, res) {     //put for institution
 }
 
 
+
 const updateIllustration = function (req, res) {     //put for illustration
     let updateData = {
         illustrated: req.body.illustrated,
@@ -201,7 +203,7 @@ const updateIllustration = function (req, res) {     //put for illustration
 
     let illustration = req.body.illustration
 
-    Submission.findByIdAndUpdate(req.params.userid, updateData)
+    Submission.findByIdAndUpdate(req.params.id, updateData)
         .then((result) => {
             File.findOneAndUpdate({ _id: result.fileId }, { illustration: illustration }, { new: true })
                 .then((result) => {

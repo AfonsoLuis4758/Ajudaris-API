@@ -2,19 +2,15 @@ const express = require("express")
 const router = express.Router()
 const {body, validationResult} = require("express-validator")
 const User_controller = require("../controllers/controllers_user")
-const { checkAdmin } = require('../utilities/utilities');
-const { checkUploader } = require('../utilities/utilities');
-const { checkJury } = require('../utilities/utilities');
-const { checkRevisor } = require('../utilities/utilities');
-const { checkDesigner } = require('../utilities/utilities');
+const {
+    checkAdmin,
+    checkJury,
+    checkUser
+} = require('../utilities/utilities');
 
 router.post('/login',  function (req, res) {
     User_controller.login(req, res); 
 })
-
-router.post('/logout', (req, res) => {
-    User_controller.logout(req, res);
-});
 
 // In your routes file
 router.post('/auth/refresh', (req, res) => {
@@ -91,15 +87,15 @@ router.post('/designers', [
 })
 
 router.route("/")
-.get(function(req,res){
+.get(checkAdmin, function(req,res){
     User_controller.listAll(req,res)
 })
 
 router.route("/:email")
-.get(function(req,res){
+.get(checkUser,function(req,res){
     User_controller.listByEmail(req,res)
 })
-.put([
+.put(checkUser,[
     body("name").isString().optional().escape(),
     body("city").isString().optional().escape(),
     body("district").isString().optional().escape(),
@@ -117,10 +113,10 @@ router.route("/:email")
         })
     }
 }
-).delete(function(req,res){
+).delete(checkUser,function(req,res){
     User_controller.deleteData(req,res)
 })
-.patch( function (req, res) {
+.patch(checkUser, function (req, res) {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
         User_controller.updatePassword(req,res)
@@ -132,7 +128,7 @@ router.route("/:email")
 })
 
 
-router.route("/markers/:email")
+router.route(checkUser,"/markers/:email")
 .patch(function (req, res) {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
@@ -192,7 +188,7 @@ router.route("/email-verification")
 
 
 router.route("/years/:email")
-.patch([ 
+.patch(checkUser,[ 
     body("date").isNumeric().notEmpty(),
 ],function(req,res){
     User_controller.updateDate(req,res)
@@ -200,7 +196,7 @@ router.route("/years/:email")
 
 
 
-router.route("/ratings/:email")
+router.route(checkUser,checkJury,"/ratings/:email")
 .patch(function (req, res) {
     const errors = validationResult(req)
     if (errors.isEmpty()) {

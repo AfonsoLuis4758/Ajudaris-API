@@ -112,6 +112,7 @@ const checkDesigner = (req, res, next) => {
   });
 };
 
+
 const checkIllustrator = (req, res, next) => {
   const token = req.headers["authorization"];
 
@@ -120,12 +121,27 @@ const checkIllustrator = (req, res, next) => {
       return res.status(403).send("Invalid or missing token");
     }
 
-    if (user.role !== "illustrator" && user.role !== "admin") {
-      return res.status(403).send("Access denied: Designer only");
-    }
+    Submission.findById(req.params.id)
+      .then((submission) => {
+        if (!submission) {
+          return res.status(404).send("Submission not found");
+        }
 
-    req.user = user; // Attach user data to the request for further use
-    next();
+        // Allow if user is admin or revisor
+        if (user.role === "admin" || user.role === "revisor") {
+          req.user = user;
+          return next();
+        }
+
+        // Check if the logged-in user is the illustrator
+        if (submission.illustrator?.toString() !== user.id.toString()) {
+          return res.status(403).send("Access denied: Not the illustrator");
+        }
+
+        req.user = user;
+        next();
+      })
+      .catch(() => res.status(500).send("Server error"));
   });
 };
 
@@ -133,20 +149,36 @@ const checkIllustrator = (req, res, next) => {
 const checkUploader = (req, res, next) => {
   const token = req.headers["authorization"];
 
-  // Validate the token
   validateToken(token, (isValid, user) => {
     if (!isValid) {
       return res.status(403).send("Invalid or missing token");
     }
-        if (req.params.userid != user._id && user.role !== "admin"){
+
+    // Find the submission by ID from the route parameter
+    Submission.findById(req.params.id)
+      .then((submission) => {
+        if (!submission) {
+          return res.status(404).send("Submission not found");
+        }
+
+        // Allow if user is admin or revisor
+        if (user.role === "admin" || user.role === "revisor") {
+          req.user = user;
+          return next();
+        }
+
+        // Check if the logged-in user is the submitter
+        if (submission.submitter.toString() !== user.id.toString()) {
           return res.status(403).send("Access denied: Not the uploader");
         }
 
-        req.user = user; // Attach user data to the request for further use
-        
+        req.user = user;
         next();
       })
+      .catch(() => res.status(500).send("Server error"));
+  });
 };
+
 const checkVerification = (req, res, next) => {
   const token = req.headers["authorization"];
 
@@ -164,6 +196,40 @@ const checkVerification = (req, res, next) => {
   });
 };
 
+const checkUser = (req, res, next) => {
+  const token = req.headers["authorization"];
+
+  validateToken(token, (isValid, user) => {
+    if (!isValid) {
+      return res.status(403).send("Invalid or missing token");
+    }
+
+    if (user.email !== req.params.email && user.role != "admin") {
+      return res.status(403).send("Access denied: Designer only");
+    }
+
+    req.user = user; // Attach user data to the request for further use
+    next();
+  });
+};
+
+const checkSpecial = (req, res, next) => {
+  const token = req.headers["authorization"];
+
+  validateToken(token, (isValid, user) => {
+    if (!isValid) {
+      return res.status(403).send("Invalid or missing token");
+    }
+
+    if (user.role == "institution") {
+      return res.status(403).send("Access denied: Institution role not allowed");
+    }
+
+    req.user = user; // Attach user data to the request for further use
+    next();
+  });
+};
+
 
 exports.checkUploader = checkUploader;
 exports.checkVerification = checkVerification;
@@ -174,4 +240,6 @@ exports.checkDesigner = checkDesigner;
 exports.generateToken = generateToken;
 exports.validateToken = validateToken;
 exports.checkAdmin = checkAdmin;
+exports.checkUser = checkUser;
+exports.checkSpecial = checkSpecial;
 
