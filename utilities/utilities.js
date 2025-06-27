@@ -186,14 +186,14 @@ const checkUploader = (req, res, next) => {
 
 const checkIdbyParams = (req, res, next) => {
   const token = req.headers["authorization"];
-  
+
   validateToken(token, (isValid, user) => {
     if (!isValid) {
       return res.status(403).send("Invalid or missing token");
     }
 
-    if (user._id !== req.params.userid && user.role !== "admin") {
-      return res.status(403).send("Access denied: Designer only");
+    if (user.id != req.params.userid && user.role !== "admin") {
+      return res.status(403).send("Access denied: Not the user");
     }
 
     req.user = user; // Attach user data to the request for further use
