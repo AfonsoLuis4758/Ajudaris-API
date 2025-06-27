@@ -37,9 +37,9 @@ db.once("open", function () {
 
 
 app.use(cors());
+app.use(auth)
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json({ limit: '50mb' }));
-app.use(auth)
 app.use("/submissions", routes_submission)
 app.use("/users", routes_user)
 app.use("/ajudaris", routes_ajudaris)
