@@ -1,7 +1,7 @@
 const Ajudaris = require("../models/models_ajudaris")
 
 
-const list = function(req, res) {
+const list = function (req, res) {
 
     Ajudaris.find()
         .then((list) => {
@@ -19,7 +19,7 @@ const list = function(req, res) {
         });
 };
 
-const adminList = function(req, res) {
+const adminList = function (req, res) {
     Ajudaris.find()
         .then((list) => {
             res.status(200).json(list);
@@ -32,47 +32,47 @@ const adminList = function(req, res) {
 
 
 
-const update = function (req,res) {     //put
-    Ajudaris.findOne({id: "ajudaris"})
-    .then((result)=>{
-        if(result.currentDate != req.body.currentDate){
-            let array = result.dates
+const update = function (req, res) {     //put
+    Ajudaris.findOne({ id: "ajudaris" })
+        .then((result) => {
+            if (result.currentDate != req.body.currentDate) {
+                let array = result.dates
 
-            if(!array.includes(req.body.currentDate)){
-                array.push(req.body.currentDate)
+                if (!array.includes(req.body.currentDate)) {
+                    array.push(req.body.currentDate)
+                }
+
+                updateData = {
+                    message: req.body.message,
+                    signUpDate: req.body.signUpDate,
+                    submissionDate: req.body.submissionDate,
+                    currentDate: req.body.currentDate,
+                    illustratorCode: req.body.illustratorCode,
+                    juryCode: req.body.juryCode,
+                    revisorCode: req.body.revisorCode,
+                    designerCode: req.body.designerCode,
+                    dates: array
+                }
+            } else {
+                updateData = {
+                    message: req.body.message,
+                    signUpDate: req.body.signUpDate,
+                    submissionDate: req.body.submissionDate,
+                    currentDate: req.body.currentDate,
+                    illustratorCode: req.body.illustratorCode,
+                    juryCode: req.body.juryCode,
+                    revisorCode: req.body.revisorCode,
+                    designerCode: req.body.designerCode,
+                }
             }
+            Ajudaris.findOneAndUpdate({ id: "ajudaris" }, updateData, { new: true, upsert: false })
+                .then((result) => {
+                    res.status(200).json(result)
+                }).catch((error) => {
+                    res.status(400).send("Error: " + error)
+                })
+        })
 
-            updateData = {
-                message: req.body.message,
-                signUpDate: req.body.signUpDate,
-                submissionDate: req.body.submissionDate,
-                currentDate: req.body.currentDate,
-                illustratorCode: req.body.illustratorCode,
-                juryCode: req.body.juryCode,
-                revisorCode: req.body.revisorCode,
-                designerCode: req.body.designerCode,
-                dates: array
-            }
-        }else{
-            updateData = {
-                message: req.body.message,
-                signUpDate: req.body.signUpDate,
-                submissionDate: req.body.submissionDate,
-                currentDate: req.body.currentDate,
-                illustratorCode: req.body.illustratorCode,
-                juryCode: req.body.juryCode,
-                revisorCode: req.body.revisorCode,
-                designerCode: req.body.designerCode,
-            } 
-        }
-    })
-
-    Ajudaris.findOneAndUpdate({id: "ajudaris"},updateData,{ new: true ,upsert: false})
-    .then((result)=>{ 
-        res.status(200).json(result)
-    }).catch((error)=> {
-        res.status(400).send("Error: " + error)
-    })
 }
 
 
