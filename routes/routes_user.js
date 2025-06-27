@@ -3,9 +3,9 @@ const router = express.Router()
 const {body, validationResult} = require("express-validator")
 const User_controller = require("../controllers/controllers_user")
 const {
-    checkAdmin,
     checkJury,
-    checkUser
+    checkUser,
+    checkRevisor
 } = require('../utilities/utilities');
 
 router.post('/login',  function (req, res) {
@@ -87,7 +87,7 @@ router.post('/designers', [
 })
 
 router.route("/")
-.get(checkAdmin, function(req,res){
+.get(checkRevisor, function(req,res){
     User_controller.listAll(req,res)
 })
 

@@ -3,7 +3,6 @@ const router = express.Router()
 const {body, validationResult} = require("express-validator")
 const Submission_controller = require("../controllers/controllers_submission")
 const {
-    checkAdmin,
     checkRevisor,
     checkDesigner,
     checkIllustrator,
