@@ -4,11 +4,12 @@ const {body, validationResult} = require("express-validator")
 const Submission_controller = require("../controllers/controllers_submission")
 const {
     checkAdmin,
-    checkUploader,
     checkRevisor,
     checkDesigner,
     checkIllustrator,
-    checkVerification
+    checkUploader,
+    checkVerification,
+    checkSpecial
 } = require('../utilities/utilities');
 
 router.route("/")
