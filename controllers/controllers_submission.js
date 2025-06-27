@@ -14,7 +14,7 @@ const listAll = function (req, res) {
 
     const Filter = req.query.year ? { date: req.query.year } : {}; // If year is provided, use it as a filter, otherwise use an empty filter
 
-    Submission.find(Filter).populate("submitter").sort({ "_id": -1 }).populate("illustrator")
+    Submission.find(Filter).populate("submitter").sort({ "_id": -1 }).populate("illustrator", "-password")
         .then((list) => {
             res.status(200).json(list);
         })
@@ -27,7 +27,7 @@ const listAll = function (req, res) {
 
 
 const listById = function (req, res) {
-    Submission.find({ submitter: req.params.userid }).populate("submitter")
+    Submission.find({ submitter: req.params.userid }).populate("submitter", "-password")
         .then((list) => {
             res.status(200).json(list);
         })
@@ -42,7 +42,7 @@ const listSelected = function (req, res) {
 
     const Filter = req.query.year ? { date: req.query.year, state: "selected" } : { state: "selected" }; // If year is provided, use it as a filter, otherwise use an empty filter
 
-    Submission.find(Filter).sort({ "_id": 1 }).populate("submitter").populate("illustrator")
+    Submission.find(Filter).sort({ "_id": 1 }).populate("submitter", "-password").populate("illustrator", "-password")
         .then((list) => {
             res.status(200).json(list);
         })
@@ -79,7 +79,7 @@ const getDocuments = function (req, res) {
 
 
 const listByIllustrator = function (req, res) {
-    Submission.find({ illustrator: req.params.userid }).populate("illustrator").populate("submitter")
+    Submission.find({ illustrator: req.params.userid }).populate("illustrator", "-password").populate("submitter", "-password").select('-rating')
         .then((list) => {
             res.status(200).json(list);
         })
