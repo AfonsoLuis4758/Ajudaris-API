@@ -10,7 +10,8 @@ const {
     checkUploader,
     checkVerification,
     checkSpecial,
-    checkIdbyParams
+    checkIdbyParams,
+    checkJury
 } = require('../utilities/utilities');
 
 router.route("/")
@@ -34,7 +35,7 @@ router.route("/")
     ) 
 
     router.route("/submissions")
-    .get(checkAdmin,function(req,res){
+    .get(checkJury,function(req,res){
         Submission_controller.listAll(req,res)
     })
 

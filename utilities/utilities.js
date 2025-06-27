@@ -69,7 +69,7 @@ const checkJury = (req, res, next) => {
       return res.status(403).send("Invalid or missing token");
     }
 
-    if (user.role !== "jury" && user.role !== "admin") {
+    if (user.role !== "jury" && user.role !== "admin" && user.role !== "revisor") {
       return res.status(403).send("Access denied: Jury only");
     }
 
@@ -136,7 +136,6 @@ const checkIllustrator = (req, res, next) => {
 
         // Check if the logged-in user is the illustrator
         if (submission.illustrator?.toString() != user.id) {
-          console.log(submission.illustrator?.toString());
           return res.status(403).send("Access denied: Not the illustrator");
         }
 
