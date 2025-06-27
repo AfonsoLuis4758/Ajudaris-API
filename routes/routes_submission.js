@@ -9,7 +9,8 @@ const {
     checkIllustrator,
     checkUploader,
     checkVerification,
-    checkSpecial
+    checkSpecial,
+    checkIdbyParams
 } = require('../utilities/utilities');
 
 router.route("/")
@@ -43,12 +44,12 @@ router.route("/winners")
     })
     
 router.route("/:userid")
-.get(checkUploader,function(req,res){
+.get(checkIdbyParams,function(req,res){
     Submission_controller.listById(req,res)
 })
 
 router.route("/illustrators/:userid")   
-.get(checkIllustrator,function(req,res){
+.get(checkIdbyParams,function(req,res){
     Submission_controller.listByIllustrator(req,res)
 })
 

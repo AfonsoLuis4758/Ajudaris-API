@@ -151,6 +151,7 @@ const update = function (req, res) {     //put
 
                 Submission.findByIdAndUpdate(req.params.id, updateData, { new: true, upsert: false })
                     .then((result) => {
+                        console.log(result)
                         File.findOneAndUpdate({ _id: result.fileId }, { document: document, illustration: illustration }, { new: true })
                             .then((result) => {
                                 res.status(200).json(result)

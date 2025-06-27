@@ -117,7 +117,6 @@ const checkIllustrator = (req, res, next) => {
   const token = req.headers["authorization"];
 
   validateToken(token, (isValid, user) => {
-    console.log(token)
     if (!isValid) {
       return res.status(403).send("Invalid or missing token");
     }
@@ -145,6 +144,9 @@ const checkIllustrator = (req, res, next) => {
       .catch(() => res.status(500).send("Server error"));
   });
 };
+
+
+
 
 // Middleware to check if the user is the uploader of a submission temporary
 const checkUploader = (req, res, next) => {
@@ -177,6 +179,23 @@ const checkUploader = (req, res, next) => {
         next();
       })
       .catch(() => res.status(500).send("Server error"));
+  });
+};
+
+
+
+const checkIdbyParams = (req, res, next) => {
+  validateToken(token, (isValid, user) => {
+    if (!isValid) {
+      return res.status(403).send("Invalid or missing token");
+    }
+
+    if (user._id !== req.params.userid && user.role !== "admin") {
+      return res.status(403).send("Access denied: Designer only");
+    }
+
+    req.user = user; // Attach user data to the request for further use
+    next();
   });
 };
 
@@ -243,4 +262,5 @@ exports.validateToken = validateToken;
 exports.checkAdmin = checkAdmin;
 exports.checkUser = checkUser;
 exports.checkSpecial = checkSpecial;
+exports.checkIdbyParams = checkIdbyParams;
 
