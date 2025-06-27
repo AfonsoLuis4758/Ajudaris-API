@@ -128,8 +128,8 @@ router.route("/:email")
 })
 
 
-router.route(checkUser,"/markers/:email")
-.patch(function (req, res) {
+router.route("/markers/:email")
+.patch(checkUser,function (req, res) {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
         User_controller.updateMarkers(req,res)
@@ -196,8 +196,8 @@ router.route("/years/:email")
 
 
 
-router.route(checkUser,checkJury,"/ratings/:email")
-.patch(function (req, res) {
+router.route("/ratings/:email")
+.patch(checkUser,checkJury,function (req, res) {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
         User_controller.addChangeRating(req,res)
