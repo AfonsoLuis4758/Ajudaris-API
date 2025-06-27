@@ -134,7 +134,8 @@ const checkIllustrator = (req, res, next) => {
         }
 
         // Check if the logged-in user is the illustrator
-        if (submission.illustrator?.toString() !== user.id.toString()) {
+        if (submission.illustrator?.toString() != user.id) {
+          console.log(submission.illustrator?.toString());
           return res.status(403).send("Access denied: Not the illustrator");
         }
 
@@ -171,7 +172,7 @@ const checkUploader = (req, res, next) => {
         }
 
         // Check if the logged-in user is the submitter
-        if (submission.submitter.toString() !== user.id.toString()) {
+        if (submission.submitter.toString() != user.id) {
           return res.status(403).send("Access denied: Not the uploader");
         }
 
