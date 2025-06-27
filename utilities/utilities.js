@@ -185,6 +185,8 @@ const checkUploader = (req, res, next) => {
 
 
 const checkIdbyParams = (req, res, next) => {
+  const token = req.headers["authorization"];
+  
   validateToken(token, (isValid, user) => {
     if (!isValid) {
       return res.status(403).send("Invalid or missing token");
