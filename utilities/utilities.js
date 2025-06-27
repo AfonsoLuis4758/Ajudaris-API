@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/models_user")
+const Submission = require("../models/models_submission")
 
 let secret = process.env.SECRET
 
@@ -149,7 +150,7 @@ const checkIllustrator = (req, res, next) => {
 
 
 
-// Middleware to check if the user is the uploader of a submission temporary
+// Middleware to check if the user is the uploader of a submission 
 const checkUploader = (req, res, next) => {
   const token = req.headers["authorization"];
 

@@ -55,10 +55,10 @@ router.route("/illustrators/:userid")
 
 
 router.route("/illustrations/:id")   
-.put(checkIllustrator,[
+.put([
     body("illustration").isString().notEmpty(),
     body("illustrated").isBoolean().notEmpty()
-], function (req, res) {
+],checkIllustrator, function (req, res) {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
         Submission_controller.updateIllustration(req,res)
