@@ -117,6 +117,7 @@ const checkIllustrator = (req, res, next) => {
   const token = req.headers["authorization"];
 
   validateToken(token, (isValid, user) => {
+    console.log(token)
     if (!isValid) {
       return res.status(403).send("Invalid or missing token");
     }
